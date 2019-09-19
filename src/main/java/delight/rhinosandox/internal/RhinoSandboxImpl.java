@@ -107,7 +107,7 @@ public class RhinoSandboxImpl implements RhinoSandbox {
   public Object eval(final String sourceName, final String js, final Map<String, Object> variables) {
     return this.eval(sourceName, js, new VariablesWithContext() {
       @Override
-      public Map<String, Object> get(Context context) {
+      public Map<String, Object> get(Context context, Scriptable scope) {
         return variables;
       }
     });
@@ -125,7 +125,7 @@ public class RhinoSandboxImpl implements RhinoSandbox {
       final Scriptable instanceScope = context.newObject(this.safeScope);
       instanceScope.setPrototype(this.safeScope);
       instanceScope.setParentScope(null);
-      Set<Map.Entry<String, Object>> _entrySet = variables.get(context).entrySet();
+      Set<Map.Entry<String, Object>> _entrySet = variables.get(context, instanceScope).entrySet();
       for (final Map.Entry<String, Object> entry : _entrySet) {
         {
           this.allow(entry.getValue().getClass());
