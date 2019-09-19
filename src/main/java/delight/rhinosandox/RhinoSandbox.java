@@ -1,6 +1,8 @@
 package delight.rhinosandox;
 
 import java.util.Map;
+
+import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ScriptableObject;
 
 @SuppressWarnings("all")
@@ -58,4 +60,10 @@ public interface RhinoSandbox {
    * <p><code>variables</code> defines variables with Java objects which will be available for the execution of this script.
    */
   public abstract Object eval(final String soureName, final String js, final Map<String, Object> variables);
+
+  /**
+   * <p>Evaluate a script with its own scope. It has access to all objects in the global scope but cannot add new ones.
+   * <p><code>variables</code> defines variables with Java objects which will be available for the execution of this script.
+   */
+  public abstract Object eval(final String soureName, final String js, final VariablesWithContext variables);
 }

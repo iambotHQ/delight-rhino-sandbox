@@ -1,6 +1,7 @@
 package delight.rhinosandox.internal;
 
 import delight.rhinosandox.RhinoSandbox;
+import delight.rhinosandox.VariablesWithContext;
 import delight.rhinosandox.internal.RhinoEval;
 import delight.rhinosandox.internal.RhinoEvalDummy;
 import delight.rhinosandox.internal.SafeClassShutter;
@@ -10,6 +11,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ContextFactory;
@@ -103,6 +105,16 @@ public class RhinoSandboxImpl implements RhinoSandbox {
   
   @Override
   public Object eval(final String sourceName, final String js, final Map<String, Object> variables) {
+    return this.eval(sourceName, js, new VariablesWithContext() {
+      @Override
+      public Map<String, Object> get(Context context) {
+        return variables;
+      }
+    });
+  }
+
+  @Override
+  public Object eval(final String sourceName, final String js, final VariablesWithContext variables) {
     this.assertContextFactory();
     try {
       final Context context = this.contextFactory.enterContext();
@@ -113,7 +125,7 @@ public class RhinoSandboxImpl implements RhinoSandbox {
       final Scriptable instanceScope = context.newObject(this.safeScope);
       instanceScope.setPrototype(this.safeScope);
       instanceScope.setParentScope(null);
-      Set<Map.Entry<String, Object>> _entrySet = variables.entrySet();
+      Set<Map.Entry<String, Object>> _entrySet = variables.get(context).entrySet();
       for (final Map.Entry<String, Object> entry : _entrySet) {
         {
           this.allow(entry.getValue().getClass());
